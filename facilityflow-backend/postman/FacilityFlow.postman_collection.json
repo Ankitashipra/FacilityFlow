@@ -1,0 +1,258 @@
+{
+  "info": {
+    "name": "FacilityFlow API",
+    "description": "Enterprise Facility & Asset Management Platform — full API collection.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }]
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080/api/v1" },
+    { "key": "accessToken", "value": "" },
+    { "key": "refreshToken", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/auth/register",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Test User\",\n  \"email\": \"test.user@facilityflow.com\",\n  \"password\": \"Password123\",\n  \"role\": \"EMPLOYEE\",\n  \"department\": \"Engineering\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json && json.data) {",
+                  "  pm.collectionVariables.set('accessToken', json.data.accessToken);",
+                  "  pm.collectionVariables.set('refreshToken', json.data.refreshToken);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@facilityflow.com\",\n  \"password\": \"Password123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Refresh Token",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/auth/refresh",
+            "body": { "mode": "raw", "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}" }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/auth/logout",
+            "body": { "mode": "raw", "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}" }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        { "name": "Get My Profile", "request": { "method": "GET", "url": "{{baseUrl}}/users/me" } },
+        { "name": "List Users", "request": { "method": "GET", "url": "{{baseUrl}}/users?page=0&size=20" } },
+        { "name": "Get User By Id", "request": { "method": "GET", "url": "{{baseUrl}}/users/1" } },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/users/1",
+            "body": { "mode": "raw", "raw": "{\n  \"designation\": \"Senior Engineer\"\n}" }
+          }
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/users/change-password",
+            "body": { "mode": "raw", "raw": "{\n  \"currentPassword\": \"Password123\",\n  \"newPassword\": \"NewPassword123\"\n}" }
+          }
+        },
+        { "name": "Delete User", "request": { "method": "DELETE", "url": "{{baseUrl}}/users/1" } }
+      ]
+    },
+    {
+      "name": "Facilities (Buildings & Floors)",
+      "item": [
+        {
+          "name": "Create Building",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/facilities/buildings",
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"Innovation Tower\",\n  \"code\": \"BLD-A\",\n  \"address\": \"Plot 14, Tech Park Road\",\n  \"city\": \"Bhubaneswar\",\n  \"totalFloors\": 8\n}" }
+          }
+        },
+        { "name": "List Buildings", "request": { "method": "GET", "url": "{{baseUrl}}/facilities/buildings?page=0&size=20" } },
+        { "name": "Get Building", "request": { "method": "GET", "url": "{{baseUrl}}/facilities/buildings/1" } },
+        {
+          "name": "Create Floor",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/facilities/floors",
+            "body": { "mode": "raw", "raw": "{\n  \"buildingId\": 1,\n  \"floorNumber\": 4,\n  \"name\": \"Fourth Floor\"\n}" }
+          }
+        },
+        { "name": "List Floors For Building", "request": { "method": "GET", "url": "{{baseUrl}}/facilities/buildings/1/floors" } }
+      ]
+    },
+    {
+      "name": "Rooms",
+      "item": [
+        {
+          "name": "Create Room",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/rooms",
+            "body": { "mode": "raw", "raw": "{\n  \"floorId\": 2,\n  \"name\": \"Phoenix Meeting Room\",\n  \"code\": \"A2-R03\",\n  \"type\": \"MEETING_ROOM\",\n  \"capacity\": 6\n}" }
+          }
+        },
+        { "name": "List Rooms", "request": { "method": "GET", "url": "{{baseUrl}}/rooms?page=0&size=20" } },
+        { "name": "Get Room", "request": { "method": "GET", "url": "{{baseUrl}}/rooms/1" } },
+        { "name": "Delete Room", "request": { "method": "DELETE", "url": "{{baseUrl}}/rooms/1" } }
+      ]
+    },
+    {
+      "name": "Assets",
+      "item": [
+        {
+          "name": "Create Asset",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/assets",
+            "body": { "mode": "raw", "raw": "{\n  \"assetTag\": \"AST-CMP-0099\",\n  \"name\": \"MacBook Pro 16\\\"\",\n  \"type\": \"COMPUTER\",\n  \"roomId\": 3,\n  \"purchaseDate\": \"2024-01-10\",\n  \"warrantyExpiryDate\": \"2027-01-10\",\n  \"vendor\": \"Apple\",\n  \"purchaseCost\": 250000\n}" }
+          }
+        },
+        { "name": "List Assets", "request": { "method": "GET", "url": "{{baseUrl}}/assets?page=0&size=20" } },
+        { "name": "Get Asset", "request": { "method": "GET", "url": "{{baseUrl}}/assets/1" } }
+      ]
+    },
+    {
+      "name": "Maintenance Tickets",
+      "item": [
+        {
+          "name": "Create Ticket",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/tickets",
+            "body": { "mode": "raw", "raw": "{\n  \"title\": \"Monitor flickering\",\n  \"description\": \"External monitor in workstation 12 flickers intermittently.\",\n  \"roomId\": 3,\n  \"priority\": \"MEDIUM\"\n}" }
+          }
+        },
+        {
+          "name": "Assign Technician",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/tickets/1/assign",
+            "body": { "mode": "raw", "raw": "{\n  \"technicianId\": 3\n}" }
+          }
+        },
+        {
+          "name": "Update Status",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/tickets/1/status",
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"IN_PROGRESS\"\n}" }
+          }
+        },
+        {
+          "name": "Add Comment",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/tickets/1/comments",
+            "body": { "mode": "raw", "raw": "{\n  \"content\": \"Ordered a replacement cable.\"\n}" }
+          }
+        },
+        { "name": "List Tickets", "request": { "method": "GET", "url": "{{baseUrl}}/tickets?page=0&size=20" } },
+        { "name": "My Assigned Tickets", "request": { "method": "GET", "url": "{{baseUrl}}/tickets/my-assignments" } }
+      ]
+    },
+    {
+      "name": "Reservations",
+      "item": [
+        {
+          "name": "Create Reservation",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/reservations",
+            "body": { "mode": "raw", "raw": "{\n  \"roomId\": 2,\n  \"purpose\": \"Design review\",\n  \"startTime\": \"2026-08-05T10:00:00\",\n  \"endTime\": \"2026-08-05T11:00:00\",\n  \"attendeeCount\": 5\n}" }
+          }
+        },
+        { "name": "Approve Reservation", "request": { "method": "POST", "url": "{{baseUrl}}/reservations/1/approve" } },
+        {
+          "name": "Reject Reservation",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/reservations/1/reject",
+            "body": { "mode": "raw", "raw": "{\n  \"reason\": \"Room double-booked for maintenance\"\n}" }
+          }
+        },
+        { "name": "Cancel Reservation", "request": { "method": "POST", "url": "{{baseUrl}}/reservations/1/cancel" } },
+        { "name": "My Reservations", "request": { "method": "GET", "url": "{{baseUrl}}/reservations/my" } },
+        {
+          "name": "Calendar View",
+          "request": { "method": "GET", "url": "{{baseUrl}}/reservations/calendar?roomId=2&from=2026-08-01T00:00:00&to=2026-08-31T23:59:59" }
+        }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "item": [
+        { "name": "List My Notifications", "request": { "method": "GET", "url": "{{baseUrl}}/notifications" } },
+        { "name": "Unread Count", "request": { "method": "GET", "url": "{{baseUrl}}/notifications/unread-count" } },
+        { "name": "Mark As Read", "request": { "method": "PATCH", "url": "{{baseUrl}}/notifications/1/read" } }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "item": [
+        { "name": "Get Dashboard Stats", "request": { "method": "GET", "url": "{{baseUrl}}/dashboard" } }
+      ]
+    },
+    {
+      "name": "Audit Logs",
+      "item": [
+        { "name": "List Audit Logs", "request": { "method": "GET", "url": "{{baseUrl}}/audit-logs?page=0&size=20" } }
+      ]
+    }
+  ]
+}

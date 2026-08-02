@@ -1,0 +1,73 @@
+@use '../../../styles/mixins';
+
+.toolbar {
+  margin-bottom: var(--ff-space-5);
+}
+
+.table-skeleton {
+  height: 320px;
+  border-radius: var(--ff-radius-lg);
+  background: linear-gradient(90deg, #ffffff08 25%, #ffffff12 37%, #ffffff08 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 100% 0; }
+  100% { background-position: 0 0; }
+}
+
+.reservation-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ff-space-3);
+}
+
+.reservation-card {
+  @include mixins.glass-panel;
+  @include mixins.card-hover;
+  padding: var(--ff-space-5);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ff-space-4);
+  flex-wrap: wrap;
+}
+
+.reservation-card__header {
+  display: flex;
+  align-items: center;
+  gap: var(--ff-space-2);
+  margin-bottom: var(--ff-space-1);
+
+  h3 { font-size: 15px; }
+}
+
+.reservation-card__purpose {
+  font-size: 13px;
+  color: var(--ff-text-primary);
+  margin-bottom: 4px;
+}
+
+.reservation-card__time {
+  font-size: 12px;
+  color: var(--ff-text-tertiary);
+}
+
+.reservation-card__requester {
+  font-size: 12px;
+  color: var(--ff-text-tertiary);
+  margin-top: 4px;
+}
+
+.reservation-card__rejection {
+  font-size: 12px;
+  color: var(--ff-danger);
+  margin-top: var(--ff-space-2);
+}
+
+.reservation-card__actions {
+  display: flex;
+  gap: var(--ff-space-2);
+  flex-shrink: 0;
+}

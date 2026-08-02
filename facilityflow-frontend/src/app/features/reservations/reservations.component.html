@@ -1,0 +1,101 @@
+<ff-page-header title="Reservations" subtitle="Book meeting rooms with automatic double-booking prevention.">
+  <button class="ff-btn ff-btn--primary" (click)="openCreate()">+ Book a Room</button>
+</ff-page-header>
+
+@if (auth.isManagerOrAdmin()) {
+  <div class="toolbar">
+    <button class="ff-btn" [class.ff-btn--primary]="showAll()" [class.ff-btn--ghost]="!showAll()" (click)="toggleView()">
+      {{ showAll() ? 'Showing All Reservations' : 'Show All Reservations' }}
+    </button>
+  </div>
+}
+
+@if (loading()) {
+  <div class="table-skeleton"></div>
+} @else {
+  @if (page(); as p) {
+  @if (p.content.length === 0) {
+    <ff-empty-state icon="◷" title="No reservations" description="Book a meeting room to get started."></ff-empty-state>
+  } @else {
+    <div class="reservation-list">
+      @for (r of p.content; track r.id) {
+        <div class="reservation-card">
+          <div class="reservation-card__main">
+            <div class="reservation-card__header">
+              <h3>{{ r.roomName }}</h3>
+              <ff-badge [value]="r.status"></ff-badge>
+            </div>
+            <p class="reservation-card__purpose">{{ r.purpose }}</p>
+            <p class="reservation-card__time">
+              {{ r.startTime | date: 'EEE, MMM d · h:mm a' }} — {{ r.endTime | date: 'h:mm a' }}
+              @if (r.attendeeCount) { · {{ r.attendeeCount }} attendees }
+            </p>
+            @if (showAll()) {
+              <p class="reservation-card__requester">Requested by {{ r.requestedByName }}</p>
+            }
+            @if (r.status === 'REJECTED' && r.rejectionReason) {
+              <p class="reservation-card__rejection">Rejected: {{ r.rejectionReason }}</p>
+            }
+          </div>
+          <div class="reservation-card__actions">
+            @if (r.status === 'PENDING' && auth.isManagerOrAdmin()) {
+              <button class="ff-btn ff-btn--primary" (click)="approve(r)">Approve</button>
+              <button class="ff-btn ff-btn--danger" (click)="openReject(r)">Reject</button>
+            }
+            @if ((r.status === 'PENDING' || r.status === 'APPROVED') && !showAll()) {
+              <button class="ff-btn ff-btn--ghost" (click)="cancel(r)">Cancel</button>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    <ff-pagination [pageNumber]="p.pageNumber" [totalPages]="p.totalPages" [totalElements]="p.totalElements" [last]="p.last" (pageChange)="load($event)"></ff-pagination>
+  }
+  }
+}
+
+@if (rejectingId(); as id) {
+  <ff-modal title="Reject Reservation" width="380px" (close)="rejectingId.set(null)">
+    <form [formGroup]="rejectForm" (ngSubmit)="confirmReject()">
+      <div class="ff-field">
+        <label class="ff-label">Reason</label>
+        <textarea class="ff-textarea" formControlName="reason" placeholder="Room needed for maintenance…"></textarea>
+      </div>
+      <button type="submit" class="ff-btn ff-btn--danger" style="width: 100%;" [disabled]="rejectForm.invalid">Confirm Rejection</button>
+    </form>
+  </ff-modal>
+}
+
+@if (showModal()) {
+  <ff-modal title="Book a Room" (close)="showModal.set(false)">
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="ff-field">
+        <label class="ff-label">Room</label>
+        <select class="ff-select" formControlName="roomId">
+          <option [value]="0" disabled>Select a room</option>
+          @for (r of rooms(); track r.id) { <option [value]="r.id">{{ r.name }} — {{ r.buildingName }} (cap. {{ r.capacity }})</option> }
+        </select>
+      </div>
+      <div class="ff-field">
+        <label class="ff-label">Purpose</label>
+        <input class="ff-input" formControlName="purpose" placeholder="Sprint planning">
+      </div>
+      <div class="ff-field">
+        <label class="ff-label">Start Time</label>
+        <input class="ff-input" type="datetime-local" formControlName="startTime">
+      </div>
+      <div class="ff-field">
+        <label class="ff-label">End Time</label>
+        <input class="ff-input" type="datetime-local" formControlName="endTime">
+      </div>
+      <div class="ff-field">
+        <label class="ff-label">Attendees</label>
+        <input class="ff-input" type="number" min="1" formControlName="attendeeCount">
+      </div>
+      <button type="submit" class="ff-btn ff-btn--primary" style="width: 100%;" [disabled]="saving()">
+        {{ saving() ? 'Requesting…' : 'Request Reservation' }}
+      </button>
+    </form>
+  </ff-modal>
+}

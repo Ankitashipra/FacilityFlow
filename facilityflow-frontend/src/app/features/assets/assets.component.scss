@@ -1,0 +1,119 @@
+@use '../../../styles/mixins';
+
+.toolbar {
+  display: flex;
+  gap: var(--ff-space-3);
+  margin-bottom: var(--ff-space-5);
+}
+
+.search-input { flex: 1; max-width: 360px; }
+.filter-select { width: 220px; }
+
+.asset-table-wrap {
+  @include mixins.glass-panel;
+  @include mixins.scrollbar-slim;
+  overflow-x: auto;
+}
+
+.table-skeleton {
+  height: 320px;
+  background: linear-gradient(90deg, #ffffff08 25%, #ffffff12 37%, #ffffff08 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 100% 0; }
+  100% { background-position: 0 0; }
+}
+
+.asset-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+
+  th {
+    text-align: left;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--ff-text-tertiary);
+    font-weight: 700;
+    padding: var(--ff-space-3) var(--ff-space-4);
+    border-bottom: 1px solid var(--ff-border-default);
+  }
+
+  td {
+    padding: var(--ff-space-3) var(--ff-space-4);
+    border-bottom: 1px solid var(--ff-border-subtle);
+    vertical-align: middle;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #ffffff05; }
+}
+
+.qr-thumb {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  background: #fff;
+  padding: 2px;
+  cursor: pointer;
+  transition: transform var(--ff-duration-fast) var(--ff-ease);
+
+  &:hover { transform: scale(1.5); }
+}
+
+.asset-name {
+  font-weight: 600;
+  color: var(--ff-text-primary);
+}
+
+.asset-tag {
+  font-family: var(--ff-font-mono);
+  font-size: 11px;
+  color: var(--ff-text-tertiary);
+}
+
+.warranty-warning {
+  color: var(--ff-warning);
+  font-weight: 600;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  color: var(--ff-text-tertiary);
+  font-size: 12px;
+  padding: 4px;
+  border-radius: var(--ff-radius-sm);
+
+  &:hover { color: var(--ff-danger); background: var(--ff-danger-dim); }
+}
+
+.qr-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--ff-space-3);
+  text-align: center;
+
+  img {
+    width: 220px;
+    height: 220px;
+    background: #fff;
+    border-radius: var(--ff-radius-md);
+    padding: var(--ff-space-3);
+  }
+
+  p {
+    color: var(--ff-text-secondary);
+    font-size: 12.5px;
+  }
+}
+
+@media (max-width: 640px) {
+  .toolbar { flex-direction: column; }
+  .search-input, .filter-select { max-width: none; width: 100%; }
+}

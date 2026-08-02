@@ -1,0 +1,74 @@
+@use '../../../styles/mixins';
+
+.toolbar { display: flex; gap: var(--ff-space-3); margin-bottom: var(--ff-space-5); }
+.search-input { flex: 1; max-width: 360px; }
+.filter-select { width: 220px; }
+
+.table-skeleton {
+  height: 320px;
+  border-radius: var(--ff-radius-lg);
+  background: linear-gradient(90deg, #ffffff08 25%, #ffffff12 37%, #ffffff08 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease infinite;
+}
+@keyframes shimmer { 0% { background-position: 100% 0; } 100% { background-position: 0 0; } }
+
+.user-table-wrap {
+  @include mixins.glass-panel;
+  @include mixins.scrollbar-slim;
+  overflow-x: auto;
+}
+
+.user-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+
+  th {
+    text-align: left;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--ff-text-tertiary);
+    font-weight: 700;
+    padding: var(--ff-space-3) var(--ff-space-4);
+    border-bottom: 1px solid var(--ff-border-default);
+  }
+  td {
+    padding: var(--ff-space-3) var(--ff-space-4);
+    border-bottom: 1px solid var(--ff-border-subtle);
+    vertical-align: middle;
+  }
+  tr:last-child td { border-bottom: none; }
+}
+
+.user-name { font-weight: 600; color: var(--ff-text-primary); }
+.user-email { font-size: 12px; color: var(--ff-text-tertiary); }
+
+.role-select {
+  height: 32px;
+  width: 180px;
+  font-size: 12.5px;
+}
+
+.user-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--ff-space-2);
+}
+
+.small-btn {
+  height: 30px;
+  font-size: 12px;
+  padding: 0 var(--ff-space-3);
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  color: var(--ff-text-tertiary);
+  font-size: 12px;
+  padding: 4px;
+  border-radius: var(--ff-radius-sm);
+  &:hover { color: var(--ff-danger); background: var(--ff-danger-dim); }
+}

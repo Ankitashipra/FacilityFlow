@@ -1,0 +1,95 @@
+<ff-page-header title="Maintenance Tickets" subtitle="Report issues, track technician assignments, and monitor SLA escalation.">
+  <button class="ff-btn ff-btn--primary" (click)="openCreate()">+ New Ticket</button>
+</ff-page-header>
+
+<div class="toolbar">
+  <select class="ff-select filter-select" [value]="statusFilter()" [disabled]="showMineOnly()"
+          (change)="statusFilter.set($any($event.target).value); onFilterChange()">
+    <option value="">All statuses</option>
+    @for (s of ticketStatuses; track s) { <option [value]="s">{{ s.replaceAll('_',' ') }}</option> }
+  </select>
+  <button class="ff-btn" [class.ff-btn--primary]="showMineOnly()" [class.ff-btn--ghost]="!showMineOnly()" (click)="toggleMine()">
+    My Assignments
+  </button>
+</div>
+
+@if (loading()) {
+  <div class="ticket-table-wrap"><div class="table-skeleton"></div></div>
+} @else {
+  @if (page(); as p) {
+  @if (p.content.length === 0) {
+    <ff-empty-state icon="✎" title="No tickets found" description="Nothing matches this filter right now."></ff-empty-state>
+  } @else {
+    <div class="ticket-table-wrap">
+      <table class="ticket-table">
+        <thead>
+          <tr>
+            <th>Ticket</th>
+            <th>Priority</th>
+            <th>Status</th>
+            <th>Assigned To</th>
+            <th>Reported</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (t of p.content; track t.id) {
+            <tr [routerLink]="['/tickets', t.id]" class="ticket-row">
+              <td>
+                <div class="ticket-title">
+                  {{ t.title }}
+                  @if (t.escalated) { <span class="escalated-flag" title="Escalated">⚡</span> }
+                </div>
+                <div class="ticket-meta">{{ t.roomName || t.assetName || 'General' }}</div>
+              </td>
+              <td><ff-badge [value]="t.priority"></ff-badge></td>
+              <td><ff-badge [value]="t.status"></ff-badge></td>
+              <td>{{ t.assignedToName || '— Unassigned' }}</td>
+              <td>{{ t.createdAt | date: 'MMM d, y' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <ff-pagination [pageNumber]="p.pageNumber" [totalPages]="p.totalPages" [totalElements]="p.totalElements" [last]="p.last" (pageChange)="load($event)"></ff-pagination>
+  }
+  }
+}
+
+@if (showModal()) {
+  <ff-modal title="New Maintenance Ticket" (close)="showModal.set(false)">
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="ff-field">
+        <label class="ff-label">Title</label>
+        <input class="ff-input" formControlName="title" placeholder="Monitor flickering">
+      </div>
+      <div class="ff-field">
+        <label class="ff-label">Description</label>
+        <textarea class="ff-textarea" formControlName="description" placeholder="Describe the issue in detail…"></textarea>
+      </div>
+      <div class="ff-field">
+        <label class="ff-label">Priority</label>
+        <select class="ff-select" formControlName="priority">
+          @for (p of ticketPriorities; track p) { <option [value]="p">{{ p }}</option> }
+        </select>
+      </div>
+      <div class="ff-field">
+        <label class="ff-label">Room (optional)</label>
+        <select class="ff-select" formControlName="roomId">
+          <option [value]="0">None</option>
+          @for (r of rooms(); track r.id) { <option [value]="r.id">{{ r.name }}</option> }
+        </select>
+      </div>
+      <div class="ff-field">
+        <label class="ff-label">Asset (optional)</label>
+        <select class="ff-select" formControlName="assetId">
+          <option [value]="0">None</option>
+          @for (a of assets(); track a.id) { <option [value]="a.id">{{ a.name }} ({{ a.assetTag }})</option> }
+        </select>
+      </div>
+      <button type="submit" class="ff-btn ff-btn--primary" style="width: 100%;" [disabled]="saving()">
+        {{ saving() ? 'Creating…' : 'Create Ticket' }}
+      </button>
+    </form>
+  </ff-modal>
+}

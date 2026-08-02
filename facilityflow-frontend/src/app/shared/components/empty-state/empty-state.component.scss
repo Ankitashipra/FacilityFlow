@@ -1,0 +1,27 @@
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--ff-space-12) var(--ff-space-6);
+  color: var(--ff-text-secondary);
+}
+
+.empty-state__icon {
+  font-size: 28px;
+  color: var(--ff-text-tertiary);
+  margin-bottom: var(--ff-space-3);
+}
+
+h3 {
+  font-size: 15px;
+  color: var(--ff-text-primary);
+  margin-bottom: var(--ff-space-1);
+}
+
+p {
+  font-size: 13px;
+  max-width: 320px;
+  margin-bottom: var(--ff-space-4);
+}

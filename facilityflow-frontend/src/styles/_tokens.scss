@@ -1,0 +1,95 @@
+// =============================================================================
+// FacilityFlow — Design Tokens
+// Dark slate/blue-grey system with glassmorphism surfaces.
+// =============================================================================
+
+:root {
+  // ---- Base palette ----
+  --ff-bg-void:        #0a0d14;      // deepest background
+  --ff-bg-base:        #0d1119;      // app shell background
+  --ff-bg-raised:      #12172233;    // glass surface (with alpha)
+  --ff-bg-raised-solid: #131a26;     // solid fallback for raised surfaces
+  --ff-bg-overlay:     #1a2130e6;    // modal/dropdown backdrop surface
+
+  --ff-border-subtle:  #ffffff0f;
+  --ff-border-default: #ffffff1a;
+  --ff-border-strong:  #ffffff2e;
+
+  // ---- Text ----
+  --ff-text-primary:   #eef1f7;
+  --ff-text-secondary: #9aa5b8;
+  --ff-text-tertiary:  #626d82;
+  --ff-text-inverse:   #0a0d14;
+
+  // ---- Brand / accent ----
+  --ff-accent:         #5b8def;      // primary blue
+  --ff-accent-hover:   #7aa4f4;
+  --ff-accent-dim:     #5b8def26;
+  --ff-accent-text:    #a8c4f7;
+
+  --ff-teal:           #35c4b8;
+  --ff-teal-dim:       #35c4b826;
+
+  // ---- Semantic status ----
+  --ff-success:        #3ecf8e;
+  --ff-success-dim:    #3ecf8e22;
+  --ff-warning:        #eab54d;
+  --ff-warning-dim:    #eab54d22;
+  --ff-danger:         #ef6a6a;
+  --ff-danger-dim:     #ef6a6a22;
+  --ff-info:           #5b8def;
+  --ff-info-dim:       #5b8def22;
+
+  // ---- Priority accents ----
+  --ff-priority-low:      #6b7a94;
+  --ff-priority-medium:   #5b8def;
+  --ff-priority-high:     #eab54d;
+  --ff-priority-critical: #ef6a6a;
+
+  // ---- Elevation ----
+  --ff-shadow-sm: 0 1px 2px #00000040;
+  --ff-shadow-md: 0 4px 16px #00000052, 0 1px 2px #00000030;
+  --ff-shadow-lg: 0 16px 48px #0000006b, 0 2px 6px #00000040;
+  --ff-glow-accent: 0 0 0 1px #5b8def33, 0 8px 24px #5b8def1f;
+
+  // ---- Radius ----
+  --ff-radius-sm: 6px;
+  --ff-radius-md: 10px;
+  --ff-radius-lg: 16px;
+  --ff-radius-pill: 999px;
+
+  // ---- Spacing scale ----
+  --ff-space-1: 4px;
+  --ff-space-2: 8px;
+  --ff-space-3: 12px;
+  --ff-space-4: 16px;
+  --ff-space-5: 20px;
+  --ff-space-6: 24px;
+  --ff-space-8: 32px;
+  --ff-space-10: 40px;
+  --ff-space-12: 48px;
+
+  // ---- Type ----
+  --ff-font-display: 'Sora', 'Inter', -apple-system, sans-serif;
+  --ff-font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --ff-font-mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace;
+
+  // ---- Motion ----
+  --ff-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --ff-duration-fast: 120ms;
+  --ff-duration-base: 200ms;
+  --ff-duration-slow: 320ms;
+
+  // ---- Layout ----
+  --ff-sidebar-width: 248px;
+  --ff-topbar-height: 64px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

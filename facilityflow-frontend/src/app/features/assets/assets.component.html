@@ -1,0 +1,127 @@
+<ff-page-header title="Assets" subtitle="Computers, chairs, ACs, projectors, printers — with QR-coded tracking.">
+  @if (auth.isManagerOrAdmin()) {
+    <button class="ff-btn ff-btn--primary" (click)="openCreate()">+ Register Asset</button>
+  }
+</ff-page-header>
+
+<div class="toolbar">
+  <input class="ff-input search-input" placeholder="Search by name or asset tag…"
+         [value]="searchTerm()" (input)="searchTerm.set($any($event.target).value); onFilterChange()">
+  <select class="ff-select filter-select" [value]="statusFilter()"
+          (change)="statusFilter.set($any($event.target).value); onFilterChange()">
+    <option value="">All statuses</option>
+    @for (s of assetStatuses; track s) { <option [value]="s">{{ s.replaceAll('_',' ') }}</option> }
+  </select>
+</div>
+
+@if (loading()) {
+  <div class="asset-table-wrap"><div class="table-skeleton"></div></div>
+} @else {
+  @if (page(); as p) {
+  @if (p.content.length === 0) {
+    <ff-empty-state icon="◈" title="No assets found" description="Try a different filter, or register a new asset."></ff-empty-state>
+  } @else {
+    <div class="asset-table-wrap">
+      <table class="asset-table">
+        <thead>
+          <tr>
+            <th>QR</th>
+            <th>Asset</th>
+            <th>Type</th>
+            <th>Status</th>
+            <th>Room</th>
+            <th>Warranty</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (a of p.content; track a.id) {
+            <tr>
+              <td>
+                @if (a.qrCodeUrl) {
+                  <img [src]="a.qrCodeUrl" alt="QR code" class="qr-thumb" (click)="qrPreview.set(a)">
+                }
+              </td>
+              <td>
+                <div class="asset-name">{{ a.name }}</div>
+                <div class="asset-tag">{{ a.assetTag }}</div>
+              </td>
+              <td>{{ a.type.replaceAll('_',' ') }}</td>
+              <td><ff-badge [value]="a.status"></ff-badge></td>
+              <td>{{ a.roomName || '—' }}</td>
+              <td>
+                @if (a.warrantyExpiryDate) {
+                  <span [class.warranty-warning]="isWarrantyExpiringSoon(a)">{{ a.warrantyExpiryDate | date: 'mediumDate' }}</span>
+                } @else { — }
+              </td>
+              <td>
+                @if (auth.isManagerOrAdmin()) {
+                  <button class="icon-btn" (click)="remove(a)" title="Delete">✕</button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <ff-pagination [pageNumber]="p.pageNumber" [totalPages]="p.totalPages" [totalElements]="p.totalElements" [last]="p.last" (pageChange)="load($event)"></ff-pagination>
+  }
+  }
+}
+
+@if (qrPreview(); as asset) {
+  <ff-modal title="{{ asset.assetTag }} — QR Code" width="320px" (close)="qrPreview.set(null)">
+    <div class="qr-preview">
+      <img [src]="asset.qrCodeUrl" alt="QR code for {{ asset.assetTag }}">
+      <p>Scan to identify this asset on-site.</p>
+    </div>
+  </ff-modal>
+}
+
+@if (showModal()) {
+  <ff-modal title="Register Asset" (close)="showModal.set(false)">
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="ff-field">
+        <label class="ff-label">Asset Tag</label>
+        <input class="ff-input" formControlName="assetTag" placeholder="AST-CMP-0099">
+      </div>
+      <div class="ff-field">
+        <label class="ff-label">Name</label>
+        <input class="ff-input" formControlName="name" placeholder="Dell OptiPlex 7090">
+      </div>
+      <div class="ff-field">
+        <label class="ff-label">Type</label>
+        <select class="ff-select" formControlName="type">
+          @for (t of assetTypes; track t) { <option [value]="t">{{ t.replaceAll('_',' ') }}</option> }
+        </select>
+      </div>
+      <div class="ff-field">
+        <label class="ff-label">Room (optional)</label>
+        <select class="ff-select" formControlName="roomId">
+          <option [value]="0">Unassigned</option>
+          @for (r of rooms(); track r.id) { <option [value]="r.id">{{ r.name }} ({{ r.buildingName }})</option> }
+        </select>
+      </div>
+      <div class="ff-field">
+        <label class="ff-label">Purchase Date</label>
+        <input class="ff-input" type="date" formControlName="purchaseDate">
+      </div>
+      <div class="ff-field">
+        <label class="ff-label">Warranty Expiry (optional)</label>
+        <input class="ff-input" type="date" formControlName="warrantyExpiryDate">
+      </div>
+      <div class="ff-field">
+        <label class="ff-label">Vendor</label>
+        <input class="ff-input" formControlName="vendor" placeholder="Dell Technologies">
+      </div>
+      <div class="ff-field">
+        <label class="ff-label">Purchase Cost (₹)</label>
+        <input class="ff-input" type="number" min="0" formControlName="purchaseCost">
+      </div>
+      <button type="submit" class="ff-btn ff-btn--primary" style="width: 100%;" [disabled]="saving()">
+        {{ saving() ? 'Registering…' : 'Register Asset' }}
+      </button>
+    </form>
+  </ff-modal>
+}

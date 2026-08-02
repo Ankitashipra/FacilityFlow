@@ -1,0 +1,78 @@
+@use '../../../styles/mixins';
+
+.table-skeleton {
+  height: 300px;
+  border-radius: var(--ff-radius-lg);
+  background: linear-gradient(90deg, #ffffff08 25%, #ffffff12 37%, #ffffff08 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease infinite;
+}
+@keyframes shimmer { 0% { background-position: 100% 0; } 100% { background-position: 0 0; } }
+
+.notification-list {
+  @include mixins.glass-panel;
+  overflow: hidden;
+}
+
+.notification-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ff-space-3);
+  padding: var(--ff-space-4) var(--ff-space-5);
+  border-bottom: 1px solid var(--ff-border-subtle);
+  cursor: pointer;
+  position: relative;
+  transition: background var(--ff-duration-fast) var(--ff-ease);
+
+  &:last-child { border-bottom: none; }
+  &:hover { background: #ffffff06; }
+}
+
+.notification-item--unread {
+  background: #5b8def0a;
+}
+
+.notification-item__icon {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--ff-radius-md);
+  background: var(--ff-accent-dim);
+  color: var(--ff-accent-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.notification-item__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.notification-item__title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ff-text-primary);
+}
+
+.notification-item__message {
+  font-size: 12.5px;
+  color: var(--ff-text-secondary);
+  margin-top: 2px;
+}
+
+.notification-item__time {
+  font-size: 11px;
+  color: var(--ff-text-tertiary);
+  margin-top: 4px;
+}
+
+.unread-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ff-accent);
+  flex-shrink: 0;
+  margin-top: 4px;
+}

@@ -1,0 +1,19 @@
+.ff-badge {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 var(--ff-space-2);
+  border-radius: var(--ff-radius-pill);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.ff-badge--neutral   { background: #ffffff12; color: var(--ff-text-secondary); }
+.ff-badge--success   { background: var(--ff-success-dim); color: var(--ff-success); }
+.ff-badge--warning   { background: var(--ff-warning-dim); color: var(--ff-warning); }
+.ff-badge--danger    { background: var(--ff-danger-dim); color: var(--ff-danger); }
+.ff-badge--info      { background: var(--ff-info-dim); color: var(--ff-info); }
+.ff-badge--accent    { background: var(--ff-accent-dim); color: var(--ff-accent-text); }

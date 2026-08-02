@@ -1,0 +1,81 @@
+@use '../../../styles/mixins';
+
+.toolbar {
+  display: flex;
+  gap: var(--ff-space-3);
+  margin-bottom: var(--ff-space-5);
+}
+
+.filter-select { width: 220px; }
+
+.ticket-table-wrap {
+  @include mixins.glass-panel;
+  @include mixins.scrollbar-slim;
+  overflow-x: auto;
+}
+
+.table-skeleton {
+  height: 400px;
+  background: linear-gradient(90deg, #ffffff08 25%, #ffffff12 37%, #ffffff08 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 100% 0; }
+  100% { background-position: 0 0; }
+}
+
+.ticket-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+
+  th {
+    text-align: left;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--ff-text-tertiary);
+    font-weight: 700;
+    padding: var(--ff-space-3) var(--ff-space-4);
+    border-bottom: 1px solid var(--ff-border-default);
+  }
+
+  td {
+    padding: var(--ff-space-3) var(--ff-space-4);
+    border-bottom: 1px solid var(--ff-border-subtle);
+  }
+
+  tr:last-child td { border-bottom: none; }
+}
+
+.ticket-row {
+  cursor: pointer;
+  transition: background var(--ff-duration-fast) var(--ff-ease);
+
+  &:hover td { background: #ffffff07; }
+}
+
+.ticket-title {
+  font-weight: 600;
+  color: var(--ff-text-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--ff-space-2);
+}
+
+.escalated-flag {
+  color: var(--ff-danger);
+}
+
+.ticket-meta {
+  font-size: 12px;
+  color: var(--ff-text-tertiary);
+  margin-top: 2px;
+}
+
+@media (max-width: 640px) {
+  .toolbar { flex-direction: column; align-items: stretch; }
+  .filter-select { width: 100%; }
+}

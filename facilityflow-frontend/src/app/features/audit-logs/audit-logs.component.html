@@ -1,0 +1,47 @@
+<ff-page-header title="Audit Logs" subtitle="Immutable trail of logins, CRUD operations, and role changes."></ff-page-header>
+
+<div class="toolbar">
+  <select class="ff-select filter-select" [value]="actionFilter()" (change)="actionFilter.set($any($event.target).value); onFilterChange()">
+    <option value="">All actions</option>
+    @for (a of actions; track a) { <option [value]="a">{{ a.replaceAll('_',' ') }}</option> }
+  </select>
+</div>
+
+@if (loading()) {
+  <div class="table-skeleton"></div>
+} @else {
+  @if (page(); as p) {
+  @if (p.content.length === 0) {
+    <ff-empty-state icon="▥" title="No audit entries" description="Activity will appear here as it happens."></ff-empty-state>
+  } @else {
+    <div class="log-table-wrap">
+      <table class="log-table">
+        <thead>
+          <tr>
+            <th>Timestamp</th>
+            <th>Actor</th>
+            <th>Action</th>
+            <th>Entity</th>
+            <th>Details</th>
+            <th>IP</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (log of p.content; track log.id) {
+            <tr>
+              <td class="log-time">{{ log.timestamp | date: 'MMM d, h:mm:ss a' }}</td>
+              <td>{{ log.userName || 'System' }}</td>
+              <td><ff-badge [value]="log.action" [toneOverride]="actionTone(log.action)"></ff-badge></td>
+              <td>{{ log.entityName }}{{ log.entityId ? ' #' + log.entityId : '' }}</td>
+              <td class="log-details">{{ log.details || '—' }}</td>
+              <td class="log-ip">{{ log.ipAddress || '—' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <ff-pagination [pageNumber]="p.pageNumber" [totalPages]="p.totalPages" [totalElements]="p.totalElements" [last]="p.last" (pageChange)="load($event)"></ff-pagination>
+  }
+  }
+}

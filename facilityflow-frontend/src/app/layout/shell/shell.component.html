@@ -1,0 +1,52 @@
+<div class="shell">
+  <aside class="sidebar">
+    <div class="sidebar__brand">
+      <span class="sidebar__logo">◆</span>
+      <span class="sidebar__name">FacilityFlow</span>
+    </div>
+
+    <nav class="sidebar__nav">
+      @for (item of visibleNavItems(); track item.path) {
+        <a [routerLink]="item.path" routerLinkActive="is-active" class="nav-link">
+          <span class="nav-link__icon">{{ item.icon }}</span>
+          <span>{{ item.label }}</span>
+        </a>
+      }
+    </nav>
+
+    <div class="sidebar__footer">
+      <a routerLink="/notifications" routerLinkActive="is-active" class="nav-link">
+        <span class="nav-link__icon">🔔</span>
+        <span>Notifications</span>
+        @if (notifications.unreadCount() > 0) {
+          <span class="nav-badge">{{ notifications.unreadCount() }}</span>
+        }
+      </a>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar__spacer"></div>
+      <div class="topbar__user" (click)="toggleUserMenu()">
+        <div class="avatar">{{ initials(auth.currentUser()?.fullName) }}</div>
+        <div class="topbar__user-text">
+          <span class="topbar__user-name">{{ auth.currentUser()?.fullName }}</span>
+          <span class="topbar__user-role">{{ auth.currentUser()?.role?.replaceAll('_', ' ') }}</span>
+        </div>
+        <span class="topbar__chevron">⌄</span>
+
+        @if (userMenuOpen()) {
+          <div class="user-menu">
+            <a routerLink="/profile" class="user-menu__item">My Profile</a>
+            <button class="user-menu__item user-menu__item--danger" (click)="logout()">Log Out</button>
+          </div>
+        }
+      </div>
+    </header>
+
+    <main class="content">
+      <router-outlet />
+    </main>
+  </div>
+</div>

@@ -1,0 +1,67 @@
+@use '../../../../styles/mixins';
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: #05070ccc;
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 900;
+  padding: var(--ff-space-4);
+  animation: fade-in var(--ff-duration-base) var(--ff-ease);
+}
+
+.modal-panel {
+  @include mixins.glass-panel;
+  @include mixins.scrollbar-slim;
+  width: 100%;
+  max-height: 88vh;
+  overflow-y: auto;
+  background: linear-gradient(180deg, #1a2233f2, #131a26f7);
+  animation: rise-in var(--ff-duration-slow) var(--ff-ease);
+}
+
+.modal-header {
+  @include mixins.flex-between;
+  padding: var(--ff-space-5) var(--ff-space-6);
+  border-bottom: 1px solid var(--ff-border-subtle);
+  position: sticky;
+  top: 0;
+  background: inherit;
+  z-index: 1;
+
+  h2 {
+    font-size: 16px;
+  }
+}
+
+.modal-close {
+  background: #ffffff0d;
+  border: 1px solid var(--ff-border-default);
+  color: var(--ff-text-secondary);
+  width: 28px;
+  height: 28px;
+  border-radius: var(--ff-radius-sm);
+  font-size: 11px;
+
+  &:hover {
+    color: var(--ff-text-primary);
+    background: #ffffff18;
+  }
+}
+
+.modal-body {
+  padding: var(--ff-space-6);
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}

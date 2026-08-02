@@ -1,0 +1,55 @@
+<div class="auth-screen">
+  <div class="auth-backdrop"></div>
+
+  <div class="auth-card">
+    <div class="auth-brand">
+      <span class="auth-brand__logo">◆</span>
+      <span class="auth-brand__name">FacilityFlow</span>
+    </div>
+
+    <h1>Create your account</h1>
+    <p class="auth-subtitle">Set up access to manage your organization's facilities.</p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="ff-field">
+        <label class="ff-label" for="fullName">Full name</label>
+        <input id="fullName" class="ff-input" type="text" formControlName="fullName" placeholder="Ananya Sharma">
+      </div>
+
+      <div class="ff-field">
+        <label class="ff-label" for="email">Work email</label>
+        <input id="email" class="ff-input" type="email" formControlName="email" placeholder="you@company.com">
+      </div>
+
+      <div class="ff-field">
+        <label class="ff-label" for="password">Password</label>
+        <input id="password" class="ff-input" type="password" formControlName="password" placeholder="At least 8 characters, 1 number">
+        @if (form.controls.password.touched && form.controls.password.invalid) {
+          <p class="ff-error-text">Use at least 8 characters, with a letter and a number.</p>
+        }
+      </div>
+
+      <div class="ff-field">
+        <label class="ff-label" for="role">Role</label>
+        <select id="role" class="ff-select" formControlName="role">
+          <option value="EMPLOYEE">Employee</option>
+          <option value="FACILITY_MANAGER">Facility Manager</option>
+          <option value="ADMIN">Admin</option>
+        </select>
+      </div>
+
+      <div class="ff-field">
+        <label class="ff-label" for="department">Department (optional)</label>
+        <input id="department" class="ff-input" type="text" formControlName="department" placeholder="Engineering">
+      </div>
+
+      <button type="submit" class="ff-btn ff-btn--primary auth-submit" [disabled]="loading()">
+        {{ loading() ? 'Creating account…' : 'Create Account' }}
+      </button>
+    </form>
+
+    <p class="auth-footnote">
+      Already have an account? <a routerLink="/login">Sign in</a>
+    </p>
+  </div>
+</div>

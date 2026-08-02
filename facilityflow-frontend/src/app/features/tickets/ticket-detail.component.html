@@ -1,0 +1,95 @@
+<a routerLink="/tickets" class="back-link">← Back to Tickets</a>
+
+@if (loading()) {
+  <div class="detail-skeleton"></div>
+} @else {
+  @if (ticket(); as t) {
+  <div class="ticket-header">
+    <div>
+      <div class="ticket-header__badges">
+        <ff-badge [value]="t.priority"></ff-badge>
+        <ff-badge [value]="t.status"></ff-badge>
+        @if (t.escalated) { <span class="escalated-pill">⚡ Escalated</span> }
+      </div>
+      <h1>{{ t.title }}</h1>
+      <p class="ticket-header__meta">
+        #{{ t.id }} · Reported by {{ t.reportedByName }} on {{ t.createdAt | date: 'MMM d, y, h:mm a' }}
+        @if (t.roomName) { · {{ t.roomName }} }
+        @if (t.assetName) { · {{ t.assetName }} }
+      </p>
+    </div>
+  </div>
+
+  <div class="detail-grid">
+    <div class="detail-main">
+      <div class="panel">
+        <h3>Description</h3>
+        <p class="description">{{ t.description }}</p>
+      </div>
+
+      <div class="panel">
+        <h3>Activity & Comments</h3>
+
+        @if (t.comments.length === 0) {
+          <p class="no-comments">No comments yet.</p>
+        } @else {
+          <div class="comment-list">
+            @for (c of t.comments; track c.id) {
+              <div class="comment">
+                <div class="comment__avatar">{{ initials(c.authorName) }}</div>
+                <div class="comment__body">
+                  <div class="comment__header">
+                    <span class="comment__author">{{ c.authorName }}</span>
+                    <span class="comment__time">{{ c.createdAt | date: 'MMM d, h:mm a' }}</span>
+                  </div>
+                  <p>{{ c.content }}</p>
+                </div>
+              </div>
+            }
+          </div>
+        }
+
+        <form [formGroup]="commentForm" (ngSubmit)="submitComment()" class="comment-form">
+          <textarea class="ff-textarea" formControlName="content" placeholder="Add an update or comment…" rows="2"></textarea>
+          <button type="submit" class="ff-btn ff-btn--primary" [disabled]="submittingComment() || commentForm.invalid">
+            {{ submittingComment() ? 'Posting…' : 'Post Comment' }}
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div class="detail-side">
+      <div class="panel">
+        <h3>Assignment</h3>
+        <p class="side-label">Currently assigned to</p>
+        <p class="assignee">{{ t.assignedToName || 'Unassigned' }}</p>
+
+        @if (auth.isManagerOrAdmin()) {
+          <label class="ff-label" style="margin-top: var(--ff-space-4);">Reassign</label>
+          <select class="ff-select" [disabled]="assigning()" (change)="assign($any($event.target).value)">
+            <option value="" selected disabled>Select technician…</option>
+            @for (tech of technicians(); track tech.id) {
+              <option [value]="tech.id">{{ tech.fullName }}</option>
+            }
+          </select>
+        }
+      </div>
+
+      <div class="panel">
+        <h3>Update Status</h3>
+        <div class="status-buttons">
+          @for (s of statusOptions; track s) {
+            <button
+              class="status-btn"
+              [class.status-btn--active]="t.status === s"
+              [disabled]="t.status === 'CLOSED'"
+              (click)="updateStatus(s)">
+              {{ s.replaceAll('_',' ') }}
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+  }
+}

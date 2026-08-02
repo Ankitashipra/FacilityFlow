@@ -1,0 +1,25 @@
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--ff-space-4);
+  margin-bottom: var(--ff-space-6);
+  flex-wrap: wrap;
+}
+
+.page-header__text {
+  h1 {
+    font-size: 22px;
+  }
+  p {
+    margin-top: var(--ff-space-1);
+    color: var(--ff-text-secondary);
+    font-size: 13.5px;
+  }
+}
+
+.page-header__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--ff-space-3);
+}

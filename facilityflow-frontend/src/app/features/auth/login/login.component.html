@@ -1,0 +1,45 @@
+<div class="auth-screen">
+  <div class="auth-backdrop"></div>
+
+  <div class="auth-card">
+    <div class="auth-brand">
+      <span class="auth-brand__logo">◆</span>
+      <span class="auth-brand__name">FacilityFlow</span>
+    </div>
+
+    <h1>Welcome back</h1>
+    <p class="auth-subtitle">Sign in to manage buildings, assets, tickets and reservations.</p>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="ff-field">
+        <label class="ff-label" for="email">Work email</label>
+        <input id="email" class="ff-input" type="email" formControlName="email" placeholder="you@company.com" autocomplete="email">
+        @if (form.controls.email.touched && form.controls.email.invalid) {
+          <p class="ff-error-text">Enter a valid email address.</p>
+        }
+      </div>
+
+      <div class="ff-field">
+        <label class="ff-label" for="password">Password</label>
+        <input id="password" class="ff-input" type="password" formControlName="password" placeholder="••••••••" autocomplete="current-password">
+        @if (form.controls.password.touched && form.controls.password.invalid) {
+          <p class="ff-error-text">Password is required.</p>
+        }
+      </div>
+
+      <button type="submit" class="ff-btn ff-btn--primary auth-submit" [disabled]="loading()">
+        {{ loading() ? 'Signing in…' : 'Sign In' }}
+      </button>
+    </form>
+
+    <p class="auth-footnote">
+      Don't have an account? <a routerLink="/register">Create one</a>
+    </p>
+
+    <div class="auth-demo">
+      <span class="auth-demo__label">Demo accounts</span>
+      <code>admin&#64;facilityflow.com</code> · <code>manager&#64;facilityflow.com</code> · <code>employee&#64;facilityflow.com</code>
+      <span class="auth-demo__pw">password: Password123</span>
+    </div>
+  </div>
+</div>

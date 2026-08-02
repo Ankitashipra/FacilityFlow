@@ -1,0 +1,58 @@
+<ff-page-header title="Users" subtitle="Manage accounts, roles, and access across the organization."></ff-page-header>
+
+<div class="toolbar">
+  <input class="ff-input search-input" placeholder="Search by name or email…"
+         [value]="searchTerm()" (input)="searchTerm.set($any($event.target).value); onFilterChange()">
+  <select class="ff-select filter-select" [value]="roleFilter()"
+          (change)="roleFilter.set($any($event.target).value); onFilterChange()">
+    <option value="">All roles</option>
+    @for (r of roles; track r) { <option [value]="r">{{ r.replaceAll('_',' ') }}</option> }
+  </select>
+</div>
+
+@if (loading()) {
+  <div class="table-skeleton"></div>
+} @else {
+  @if (page(); as p) {
+  @if (p.content.length === 0) {
+    <ff-empty-state icon="◔" title="No users found" description="Try a different search or filter."></ff-empty-state>
+  } @else {
+    <div class="user-table-wrap">
+      <table class="user-table">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Department</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (u of p.content; track u.id) {
+            <tr>
+              <td>
+                <div class="user-name">{{ u.fullName }}</div>
+                <div class="user-email">{{ u.email }}</div>
+              </td>
+              <td>{{ u.department || '—' }}</td>
+              <td>
+                <select class="ff-select role-select" [value]="u.role" (change)="changeRole(u, $any($event.target).value)">
+                  @for (r of roles; track r) { <option [value]="r">{{ r.replaceAll('_',' ') }}</option> }
+                </select>
+              </td>
+              <td><ff-badge [value]="u.enabled ? 'ACTIVE' : 'RETIRED'"></ff-badge></td>
+              <td class="user-actions">
+                <button class="ff-btn ff-btn--ghost small-btn" (click)="toggleEnabled(u)">{{ u.enabled ? 'Disable' : 'Enable' }}</button>
+                <button class="icon-btn" (click)="remove(u)" title="Delete">✕</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <ff-pagination [pageNumber]="p.pageNumber" [totalPages]="p.totalPages" [totalElements]="p.totalElements" [last]="p.last" (pageChange)="load($event)"></ff-pagination>
+  }
+  }
+}

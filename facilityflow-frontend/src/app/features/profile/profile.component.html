@@ -1,0 +1,38 @@
+<ff-page-header title="My Profile" subtitle="Your account details and security settings."></ff-page-header>
+
+@if (auth.currentUser(); as user) {
+  <div class="profile-grid">
+    <div class="panel profile-card">
+      <div class="profile-avatar">{{ initials(user.fullName) }}</div>
+      <h2>{{ user.fullName }}</h2>
+      <ff-badge [value]="user.role"></ff-badge>
+      <dl class="profile-details">
+        <div><dt>Email</dt><dd>{{ user.email }}</dd></div>
+        @if (user.phoneNumber) { <div><dt>Phone</dt><dd>{{ user.phoneNumber }}</dd></div> }
+        @if (user.designation) { <div><dt>Designation</dt><dd>{{ user.designation }}</dd></div> }
+        @if (user.department) { <div><dt>Department</dt><dd>{{ user.department }}</dd></div> }
+        <div><dt>Member Since</dt><dd>{{ user.createdAt | date: 'MMM d, y' }}</dd></div>
+      </dl>
+    </div>
+
+    <div class="panel">
+      <h3>Change Password</h3>
+      <form [formGroup]="passwordForm" (ngSubmit)="changePassword()">
+        <div class="ff-field">
+          <label class="ff-label">Current Password</label>
+          <input class="ff-input" type="password" formControlName="currentPassword">
+        </div>
+        <div class="ff-field">
+          <label class="ff-label">New Password</label>
+          <input class="ff-input" type="password" formControlName="newPassword">
+          @if (passwordForm.controls.newPassword.touched && passwordForm.controls.newPassword.invalid) {
+            <p class="ff-error-text">At least 8 characters, with a letter and a number.</p>
+          }
+        </div>
+        <button type="submit" class="ff-btn ff-btn--primary" [disabled]="changingPassword()">
+          {{ changingPassword() ? 'Updating…' : 'Update Password' }}
+        </button>
+      </form>
+    </div>
+  </div>
+}

@@ -1,0 +1,76 @@
+<ff-page-header
+  [title]="greeting() + ', ' + (auth.currentUser()?.fullName?.split(' ')?.[0] ?? '')"
+  subtitle="Here's what's happening across your facilities today.">
+</ff-page-header>
+
+@if (!auth.isManagerOrAdmin()) {
+  <div class="employee-hint">
+    <p>Dashboard analytics are available to Facility Managers and Admins. Use the sidebar to raise tickets, book rooms, or check your notifications.</p>
+  </div>
+} @else if (loading()) {
+  <div class="stat-grid">
+    @for (i of [1,2,3,4,5,6]; track i) {
+      <div class="stat-skeleton"></div>
+    }
+  </div>
+} @else {
+  @if (stats(); as s) {
+  <div class="stat-grid">
+    <ff-stat-card label="Total Users" [value]="s.totalUsers" icon="◔" iconColor="#a8c4f7" iconBg="#5b8def26"></ff-stat-card>
+    <ff-stat-card label="Active Users" [value]="s.activeUsers" icon="●" iconColor="#7ce0c4" iconBg="#3ecf8e26"></ff-stat-card>
+    <ff-stat-card label="Open Tickets" [value]="s.openTickets" icon="✎" iconColor="#f3c777" iconBg="#eab54d26"></ff-stat-card>
+    <ff-stat-card label="Closed Tickets" [value]="s.closedTickets" icon="✓" iconColor="#7ce0c4" iconBg="#3ecf8e26"></ff-stat-card>
+    <ff-stat-card label="Total Assets" [value]="s.totalAssets" icon="◈" iconColor="#a8c4f7" iconBg="#5b8def26"></ff-stat-card>
+    <ff-stat-card label="Active Reservations" [value]="s.activeReservations" icon="◷" iconColor="#7fd8cf" iconBg="#35c4b826"></ff-stat-card>
+  </div>
+
+  <div class="panel-grid">
+    <div class="panel">
+      <h3>Tickets by Priority</h3>
+      <div class="bar-list">
+        @for (priority of priorityOrder; track priority) {
+          <div class="bar-row">
+            <span class="bar-row__label">{{ priority }}</span>
+            <div class="bar-row__track">
+              <div class="bar-row__fill" [class]="'bar-row__fill--' + priority.toLowerCase()"
+                   [style.width.%]="(s.ticketsByPriority[priority]) / maxPriorityCount() * 100"></div>
+            </div>
+            <span class="bar-row__value">{{ s.ticketsByPriority[priority] }}</span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Assets by Status</h3>
+      <div class="bar-list">
+        @for (status of statusOrder; track status) {
+          <div class="bar-row">
+            <span class="bar-row__label">{{ status.replaceAll('_', ' ') }}</span>
+            <div class="bar-row__track">
+              <div class="bar-row__fill bar-row__fill--accent" [style.width.%]="(s.assetsByStatus[status]) / maxStatusCount() * 100"></div>
+            </div>
+            <span class="bar-row__value">{{ s.assetsByStatus[status] }}</span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Top Buildings by Reservations</h3>
+      @if (s.topBuildings.length === 0) {
+        <p class="panel-empty">No reservation activity yet.</p>
+      } @else {
+        <ol class="top-list">
+          @for (b of s.topBuildings; track b.buildingName) {
+            <li>
+              <span class="top-list__name">{{ b.buildingName }}</span>
+              <span class="top-list__count">{{ b.reservationCount }}</span>
+            </li>
+          }
+        </ol>
+      }
+    </div>
+  </div>
+  }
+}

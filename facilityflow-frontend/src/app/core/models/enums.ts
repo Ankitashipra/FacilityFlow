@@ -1,0 +1,19 @@
+export type Role = 'ADMIN' | 'FACILITY_MANAGER' | 'EMPLOYEE';
+
+export type RoomType = 'MEETING_ROOM' | 'WORKSTATION_AREA' | 'CONFERENCE_HALL' | 'CABIN' | 'SERVER_ROOM' | 'UTILITY';
+export type RoomStatus = 'AVAILABLE' | 'OCCUPIED' | 'UNDER_MAINTENANCE' | 'RESERVED' | 'DECOMMISSIONED';
+
+export type AssetType = 'COMPUTER' | 'CHAIR' | 'DESK' | 'AC' | 'PROJECTOR' | 'PRINTER' | 'MONITOR' | 'OTHER';
+export type AssetStatus = 'ACTIVE' | 'IN_MAINTENANCE' | 'RETIRED' | 'LOST' | 'DAMAGED';
+
+export type TicketPriority = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+export type TicketStatus = 'OPEN' | 'ASSIGNED' | 'IN_PROGRESS' | 'ON_HOLD' | 'RESOLVED' | 'CLOSED' | 'ESCALATED';
+
+export type ReservationStatus = 'PENDING' | 'APPROVED' | 'REJECTED' | 'CANCELLED' | 'COMPLETED' | 'EXPIRED';
+
+export type NotificationType =
+  | 'TICKET_CREATED' | 'TICKET_ASSIGNED' | 'TICKET_STATUS_CHANGED' | 'TICKET_ESCALATED'
+  | 'RESERVATION_REQUESTED' | 'RESERVATION_APPROVED' | 'RESERVATION_REJECTED' | 'RESERVATION_CANCELLED'
+  | 'ASSET_WARRANTY_EXPIRING' | 'SYSTEM';
+
+export type AuditAction = 'LOGIN' | 'LOGOUT' | 'CREATE' | 'UPDATE' | 'DELETE' | 'ROLE_CHANGE' | 'PASSWORD_CHANGE' | 'APPROVE' | 'REJECT';

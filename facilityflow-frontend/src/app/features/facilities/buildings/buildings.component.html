@@ -1,0 +1,78 @@
+<ff-page-header title="Buildings" subtitle="The physical sites your organization occupies.">
+  @if (auth.isManagerOrAdmin()) {
+    <button class="ff-btn ff-btn--primary" (click)="openCreate()">+ New Building</button>
+  }
+</ff-page-header>
+
+@if (loading()) {
+  <div class="building-grid">
+    @for (i of [1,2,3,4,5,6]; track i) {
+      <div class="building-skeleton"></div>
+    }
+  </div>
+} @else {
+  @if (page(); as p) {
+  @if (p.content.length === 0) {
+    <ff-empty-state icon="▤" title="No buildings yet" description="Add your first building to start organizing floors and rooms.">
+      @if (auth.isManagerOrAdmin()) {
+        <button class="ff-btn ff-btn--primary" (click)="openCreate()">+ New Building</button>
+      }
+    </ff-empty-state>
+  } @else {
+    <div class="building-grid">
+      @for (b of p.content; track b.id) {
+        <div class="building-card">
+          <div class="building-card__header">
+            <span class="building-card__code">{{ b.code }}</span>
+            @if (auth.isAdmin()) {
+              <button class="icon-btn" (click)="remove(b)" title="Delete">✕</button>
+            }
+          </div>
+          <h3>{{ b.name }}</h3>
+          <p class="building-card__address">{{ b.address }}{{ b.city ? ', ' + b.city : '' }}</p>
+          <div class="building-card__stats">
+            <span><strong>{{ b.floorCount }}</strong> floors listed</span>
+            <span><strong>{{ b.totalFloors }}</strong> total floors</span>
+          </div>
+        </div>
+      }
+    </div>
+
+    <ff-pagination
+      [pageNumber]="p.pageNumber" [totalPages]="p.totalPages"
+      [totalElements]="p.totalElements" [last]="p.last"
+      (pageChange)="load($event)">
+    </ff-pagination>
+  }
+  }
+}
+
+@if (showModal()) {
+  <ff-modal title="New Building" (close)="showModal.set(false)">
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="ff-field">
+        <label class="ff-label">Name</label>
+        <input class="ff-input" formControlName="name" placeholder="Innovation Tower">
+      </div>
+      <div class="ff-field">
+        <label class="ff-label">Code</label>
+        <input class="ff-input" formControlName="code" placeholder="BLD-A">
+      </div>
+      <div class="ff-field">
+        <label class="ff-label">Address</label>
+        <input class="ff-input" formControlName="address" placeholder="Plot 14, Tech Park Road">
+      </div>
+      <div class="ff-field">
+        <label class="ff-label">City</label>
+        <input class="ff-input" formControlName="city" placeholder="Bhubaneswar">
+      </div>
+      <div class="ff-field">
+        <label class="ff-label">Total Floors</label>
+        <input class="ff-input" type="number" min="1" formControlName="totalFloors">
+      </div>
+      <button type="submit" class="ff-btn ff-btn--primary" style="width: 100%;" [disabled]="saving()">
+        {{ saving() ? 'Creating…' : 'Create Building' }}
+      </button>
+    </form>
+  </ff-modal>
+}

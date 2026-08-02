@@ -1,0 +1,91 @@
+<ff-page-header title="Rooms" subtitle="Meeting rooms, workstations, cabins, and conference halls.">
+  @if (auth.isManagerOrAdmin()) {
+    <button class="ff-btn ff-btn--primary" (click)="openCreate()">+ New Room</button>
+  }
+</ff-page-header>
+
+<div class="toolbar">
+  <input class="ff-input search-input" placeholder="Search rooms by name or code…"
+         [value]="searchTerm()" (input)="searchTerm.set($any($event.target).value); onFilterChange()">
+  <select class="ff-select filter-select" [value]="statusFilter()"
+          (change)="statusFilter.set($any($event.target).value); onFilterChange()">
+    <option value="">All statuses</option>
+    @for (s of roomStatuses; track s) { <option [value]="s">{{ s.replaceAll('_',' ') }}</option> }
+  </select>
+</div>
+
+@if (loading()) {
+  <div class="room-grid">
+    @for (i of [1,2,3,4,5,6]; track i) { <div class="room-skeleton"></div> }
+  </div>
+} @else {
+  @if (page(); as p) {
+  @if (p.content.length === 0) {
+    <ff-empty-state icon="⌗" title="No rooms found" description="Try a different filter, or add a new room."></ff-empty-state>
+  } @else {
+    <div class="room-grid">
+      @for (r of p.content; track r.id) {
+        <div class="room-card">
+          <div class="room-card__header">
+            <ff-badge [value]="r.status"></ff-badge>
+            @if (auth.isManagerOrAdmin()) {
+              <button class="icon-btn" (click)="remove(r)" title="Delete">✕</button>
+            }
+          </div>
+          <h3>{{ r.name }}</h3>
+          <p class="room-card__meta">{{ r.buildingName }} · {{ r.floorName || 'Floor ' + r.floorId }}</p>
+          <div class="room-card__footer">
+            <span class="room-card__code">{{ r.code }}</span>
+            <span class="room-card__type">{{ r.type.replaceAll('_',' ') }}</span>
+            <span class="room-card__capacity">👤 {{ r.capacity }}</span>
+          </div>
+        </div>
+      }
+    </div>
+
+    <ff-pagination [pageNumber]="p.pageNumber" [totalPages]="p.totalPages" [totalElements]="p.totalElements" [last]="p.last" (pageChange)="load($event)"></ff-pagination>
+  }
+  }
+}
+
+@if (showModal()) {
+  <ff-modal title="New Room" (close)="showModal.set(false)">
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="ff-field">
+        <label class="ff-label">Building</label>
+        <select class="ff-select" formControlName="buildingId" (change)="onBuildingChange($any($event.target).value)">
+          <option [value]="0" disabled>Select a building</option>
+          @for (b of buildings(); track b.id) { <option [value]="b.id">{{ b.name }}</option> }
+        </select>
+      </div>
+      <div class="ff-field">
+        <label class="ff-label">Floor</label>
+        <select class="ff-select" formControlName="floorId">
+          <option [value]="0" disabled>Select a floor</option>
+          @for (f of floorsForSelectedBuilding(); track f.id) { <option [value]="f.id">{{ f.name || ('Floor ' + f.floorNumber) }}</option> }
+        </select>
+      </div>
+      <div class="ff-field">
+        <label class="ff-label">Name</label>
+        <input class="ff-input" formControlName="name" placeholder="Falcon Meeting Room">
+      </div>
+      <div class="ff-field">
+        <label class="ff-label">Code</label>
+        <input class="ff-input" formControlName="code" placeholder="A2-R01">
+      </div>
+      <div class="ff-field">
+        <label class="ff-label">Type</label>
+        <select class="ff-select" formControlName="type">
+          @for (t of roomTypes; track t) { <option [value]="t">{{ t.replaceAll('_',' ') }}</option> }
+        </select>
+      </div>
+      <div class="ff-field">
+        <label class="ff-label">Capacity</label>
+        <input class="ff-input" type="number" min="1" formControlName="capacity">
+      </div>
+      <button type="submit" class="ff-btn ff-btn--primary" style="width: 100%;" [disabled]="saving()">
+        {{ saving() ? 'Creating…' : 'Create Room' }}
+      </button>
+    </form>
+  </ff-modal>
+}
